@@ -6,7 +6,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Repository;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-@RestController
+@Repository
 public class JsonBookRepository implements BookRepository<Book, UUID> {
 
     private final Path filePath;
