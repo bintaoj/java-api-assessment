@@ -1,3 +1,4 @@
+package com.cbfacademy.apiassessment;
 
 import java.util.UUID;
 
