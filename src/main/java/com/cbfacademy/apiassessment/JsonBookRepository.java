@@ -5,11 +5,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +24,9 @@ public class JsonBookRepository implements BookRepository<Book, UUID> {
 
     public JsonBookRepository(@Value("${json.file.path}") String filePath) {
         this.filePath = Paths.get(filePath);
-        gson = new GsonBuilder().create();
+        gson = new GsonBuilder()
+        .serializeNulls()
+        .create();
         database = loadDataFromJson();
     }
 
@@ -48,8 +50,16 @@ public class JsonBookRepository implements BookRepository<Book, UUID> {
 
     private void saveDataToJson() {
         try {
-            String jsonContent = gson.toJson(database);
-            Files.write(filePath, jsonContent.getBytes());
+            // Read existing data from the file
+            Map<UUID, Book> existingData = loadDataFromJson();
+
+            // Merge existing data with the current state of the database
+            existingData.putAll(database);
+
+            // Write the combined data back to the file
+            try (Writer writer = new FileWriter(String.valueOf(filePath))) {
+                gson.toJson(existingData, writer);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
