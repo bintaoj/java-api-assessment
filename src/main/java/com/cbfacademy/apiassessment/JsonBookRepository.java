@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 @Repository
-public class JsonBookRepository implements BookRepository<Book, UUID> {
+public class JsonBookRepository implements BookRepository {
 
     private final Path filePath;
     private final Gson gson;
@@ -25,7 +25,7 @@ public class JsonBookRepository implements BookRepository<Book, UUID> {
     public JsonBookRepository(@Value("${json.file.path}") String filePath) {
         this.filePath = Paths.get(filePath);
         gson = new GsonBuilder()
-        .serializeNulls()
+        //.serializeNulls()
         .create();
         database = loadDataFromJson();
     }
