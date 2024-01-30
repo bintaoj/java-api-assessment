@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BookServiceClass implements BookService{
-     BookRepository<Book, UUID> bookRepository;
+     BookRepository bookRepository;
     private final List<Book> books;
 
-    public BookServiceClass(BookRepository<Book, UUID> bookRepository, List<Book> books) {
+    public BookServiceClass(BookRepository bookRepository, List<Book> books) {
         this.bookRepository = bookRepository;
         this.books = books;
     }
