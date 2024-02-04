@@ -57,12 +57,23 @@ public class BookServiceClass implements BookService{
     @Override
     public Book updateBook(UUID id, Book updatedBook) {
         Book currentBook = bookRepository.find(id);
+
         if (currentBook != null) {
-            //bookRepository.update(currentBook);
+            
+            currentBook.setTitle(updatedBook.getTitle());
+            currentBook.setAuthor(updatedBook.getAuthor());
+            currentBook.setSubject(updatedBook.getSubject());
+            currentBook.setLanguage(updatedBook.getLanguage());
+            currentBook.setYear_published(updatedBook.getYear_published());
+            currentBook.setType(updatedBook.getType());
+            
+
+            bookRepository.update(currentBook);
         } else {
             System.out.println("Book with UUID " + id + " not found.");
         }
-        return bookRepository.update(currentBook);
+
+        return currentBook;
     }
 
     /**
