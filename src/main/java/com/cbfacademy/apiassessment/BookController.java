@@ -41,15 +41,13 @@ public class BookController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity <Book> updateBook(@PathVariable("id") UUID id, Book bookToUpdate) {
+    public ResponseEntity<Book> updateBook(@PathVariable("id") UUID id, @RequestBody Book bookToUpdate) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body( bookService.updateBook(id, bookToUpdate));
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.updateBook(id, bookToUpdate));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity <Void> deleteIou(@PathVariable("id")UUID id) {
-
-        bookService.deleteBook(id);
 
         try {
             bookService.deleteBook(id);
