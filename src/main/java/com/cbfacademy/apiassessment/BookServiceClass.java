@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.asm.Type;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,6 +47,13 @@ public class BookServiceClass implements BookService{
      */
     @Override
     public Book createBook(Book book) {
+        // Book newbook = new Book(book.getTitle(),
+        //         book.getAuthor(),
+        //         book.getSubject(),
+        //         book.getLanguage(),
+        //         book.getYear_published(),
+        //         book.getType());
+        // books.add(newbook);
         return bookRepository.create(book);
     }
 
@@ -85,7 +93,7 @@ public class BookServiceClass implements BookService{
         if (bookToDelete != null) {
             bookRepository.delete(bookToDelete);
         } else {
-            System.out.println("IOU with UUID " + id + " not found.");
+            System.out.println("Book with UUID " + id + " not found.");
         }
     }
 
@@ -97,20 +105,16 @@ public class BookServiceClass implements BookService{
      */
     @Override
     public List<Book> findByTitle(String title) {
-        List<Book> listOfBook = new ArrayList<>();
+        List<Book> bookToFind =bookRepository.findByTitle(title);
 
-        for (Book book : books) {
-            if (book.getTitle().equalsIgnoreCase(title)) {
-                listOfBook.add(book);
-            }
-        }
-
-        if (listOfBook.isEmpty()) {
+        if (bookToFind.isEmpty()) {
             System.out.println("No books found with title: " + title);
         }
 
-        return listOfBook;
+        return bookToFind;
     }
+        
+
 
 
     /**
@@ -119,20 +123,15 @@ public class BookServiceClass implements BookService{
      */
     @Override
     public List<Book> findByType(String type) {
-        List<Book> listOfBook = new ArrayList<>();
+        List<Book> bookToFind = bookRepository.findByType(type);
 
-        for (Book book : books) {
-            if (book.getType().equalsIgnoreCase(type)) {
-                listOfBook.add(book);
-            }
+        if (bookToFind.isEmpty()) {
+            System.out.println("No books found with Type: " + type);
         }
 
-        if (listOfBook.isEmpty()) {
-            System.out.println("No books found with type: " + type);
-        }
-
-        return listOfBook;
-        }
+        return bookToFind;
+    }
+        
 
 
 
@@ -142,18 +141,14 @@ public class BookServiceClass implements BookService{
      */
     @Override
     public List<Book> findByAuthor(String author) {
-        List<Book> listOfBook = new ArrayList<>();
 
-        for (Book book : books) {
-            if (book.getAuthor().equalsIgnoreCase(author)) {
-                listOfBook.add(book);
-            }
+        List<Book> bookToFind =bookRepository.findByAuthor(author);
+
+        if (bookToFind.isEmpty()) {
+            System.out.println("No books found with author: " + author);
         }
 
-        if (listOfBook.isEmpty()) {
-            System.out.println("No books found with title: " + author);
-        }
-
-        return listOfBook;
+        return bookToFind;
     }
+
 }
