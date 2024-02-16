@@ -1,22 +1,22 @@
 package com.cbfacademy.apiassessment;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.asm.Type;
+
 import org.springframework.stereotype.Service;
 
 @Service
-public class BookServiceClass implements BookService{
-     BookRepository bookRepository;
-    private final List<Book> books;
+public class BookServiceClass implements BookService {
+    BookRepository bookRepository;
+   // private final List<Book> books ;
 
-    public BookServiceClass(BookRepository bookRepository, List<Book> books) {
+    public BookServiceClass(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.books = books;
+        
     }
 
+    
 
     /**
      * @return
@@ -47,13 +47,6 @@ public class BookServiceClass implements BookService{
      */
     @Override
     public Book createBook(Book book) {
-        // Book newbook = new Book(book.getTitle(),
-        //         book.getAuthor(),
-        //         book.getSubject(),
-        //         book.getLanguage(),
-        //         book.getYear_published(),
-        //         book.getType());
-        // books.add(newbook);
         return bookRepository.create(book);
     }
 
@@ -67,14 +60,13 @@ public class BookServiceClass implements BookService{
         Book currentBook = bookRepository.find(id);
 
         if (currentBook != null) {
-            
+
             currentBook.setTitle(updatedBook.getTitle());
             currentBook.setAuthor(updatedBook.getAuthor());
             currentBook.setSubject(updatedBook.getSubject());
             currentBook.setLanguage(updatedBook.getLanguage());
             currentBook.setYear_published(updatedBook.getYear_published());
             currentBook.setType(updatedBook.getType());
-            
 
             bookRepository.update(currentBook);
         } else {
@@ -92,12 +84,11 @@ public class BookServiceClass implements BookService{
         Book bookToDelete = bookRepository.find(id);
         if (bookToDelete != null) {
             bookRepository.delete(bookToDelete);
+            
         } else {
             System.out.println("Book with UUID " + id + " not found.");
         }
     }
-
-
 
     /**
      * @param title
@@ -105,7 +96,7 @@ public class BookServiceClass implements BookService{
      */
     @Override
     public List<Book> findByTitle(String title) {
-        List<Book> bookToFind =bookRepository.findByTitle(title);
+        List<Book> bookToFind = bookRepository.findByTitle(title);
 
         if (bookToFind.isEmpty()) {
             System.out.println("No books found with title: " + title);
@@ -113,9 +104,6 @@ public class BookServiceClass implements BookService{
 
         return bookToFind;
     }
-        
-
-
 
     /**
      * @param type
@@ -131,9 +119,6 @@ public class BookServiceClass implements BookService{
 
         return bookToFind;
     }
-        
-
-
 
     /**
      * @param author
@@ -142,7 +127,7 @@ public class BookServiceClass implements BookService{
     @Override
     public List<Book> findByAuthor(String author) {
 
-        List<Book> bookToFind =bookRepository.findByAuthor(author);
+        List<Book> bookToFind = bookRepository.findByAuthor(author);
 
         if (bookToFind.isEmpty()) {
             System.out.println("No books found with author: " + author);

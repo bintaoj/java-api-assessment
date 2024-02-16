@@ -3,9 +3,7 @@ package com.cbfacademy.apiassessment;
 import com.cbfacademy.apiassessment.core.PersistenceException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.io.FileWriter;
@@ -23,15 +21,17 @@ public class JsonBookRepository implements BookRepository {
 
     private final Path filePath;
     private final Gson gson;
-    private final List<Book> books;
+    private  List<Book> books;
 
     public JsonBookRepository(@Value("${json.file.path}") String filePath) {
-        this.filePath = Paths.get(filePath);
+       this.filePath = Paths.get(filePath);
         gson = new GsonBuilder().create();
         books = loadDataFromJson();
     }
 
-    private List<Book> loadDataFromJson() {
+    
+
+    public List<Book> loadDataFromJson() {
         try {
             if (Files.exists(filePath) && Files.size(filePath) > 0) {
                 // Proceed to read and parse the JSON file
@@ -40,7 +40,8 @@ public class JsonBookRepository implements BookRepository {
                             .map(line -> gson.fromJson(line, Book.class))
                             .filter(Objects::nonNull)
                             .collect(Collectors.toList());
-
+                    // System.out.println(books);
+                    // System.out.println("---------------------------------------------------------------------");
                     return books;
                 }
             } else {
@@ -54,14 +55,25 @@ public class JsonBookRepository implements BookRepository {
         }
     }
 
-
     private void saveDataToJson() {
         try {
             // Read existing data from the file
             List<Book> existingData = loadDataFromJson();
 
-            // Add the current state of the database to existing data
-            existingData.addAll(books);
+            // Set to store unique identifiers (id + title + type)
+            Set<String> existingIdentifiers = new HashSet<>();
+            for (Book book : existingData) {
+                existingIdentifiers.add(book.getTitle() + book.getType());
+            }
+
+            // Add the current state of the database to existing data, avoiding duplicates
+            for (Book book : books) {
+                String identifier = book.getTitle() + book.getType();
+                if (!existingIdentifiers.contains(identifier)) {
+                    existingData.add(book);
+                    existingIdentifiers.add(identifier); // Update the set with the new book identifier
+                }
+            }
 
             // Write the combined data back to the file with each book on a new line
             try (Writer writer = new FileWriter(String.valueOf(filePath))) {
@@ -72,9 +84,9 @@ public class JsonBookRepository implements BookRepository {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            // Need to create a custom exception to say book already exists.
         }
     }
-
 
     /**
      * @return
@@ -82,8 +94,8 @@ public class JsonBookRepository implements BookRepository {
      */
     @Override
     public List<Book> findAll() throws PersistenceException {
-    
-        //List<Book> books = new ArrayList<>();
+
+        // List<Book> books = new ArrayList<>();
         return Collections.unmodifiableList(books);
     }
 
@@ -134,19 +146,18 @@ public class JsonBookRepository implements BookRepository {
      */
     @Override
     public void delete(Book entity) throws IllegalArgumentException, PersistenceException {
-           if (entity == null) {
+        if (entity == null) {
             throw new IllegalArgumentException("Entity cannot be null");
         }
-
-        UUID deleteBookUuid = entity.getId();
+        UUID deleteBookbyUuid = entity.getId();
         for (int i = 0; i < books.size(); i++) {
             Book currentBook = books.get(i);
-            if (currentBook.getId().equals(deleteBookUuid)) {
+            if (currentBook.getId().equals(deleteBookbyUuid)) {
                 books.remove(i);
                 saveDataToJson();
             }
         }
-        throw new PersistenceException("Book with ID " + deleteBookUuid + " not found for deletion.");
+        throw new PersistenceException("Book with ID " + deleteBookbyUuid + " not found for deletion.");
     }
 
     /**
@@ -187,7 +198,26 @@ public class JsonBookRepository implements BookRepository {
      */
     @Override
     public List<Book> findByTitle(String title) throws IllegalArgumentException, PersistenceException {
-        return null;
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
+
+        // try {
+        // Read the list of books from the JSON file
+        List<Book> allBooks = loadDataFromJson();
+
+        // Filter books by title
+        List<Book> matchingBooks = new ArrayList<>();
+        for (Book book : allBooks) {
+            if (book.getTitle().equalsIgnoreCase(title)) {
+                matchingBooks.add(book);
+            }
+        }
+        saveDataToJson();
+        return matchingBooks;
+        // } catch (IOException e) {
+        // throw new PersistenceException("Error reading books from JSON file");
+        // }
     }
 
     /**
@@ -198,7 +228,17 @@ public class JsonBookRepository implements BookRepository {
      */
     @Override
     public List<Book> findByType(String type) throws IllegalArgumentException, PersistenceException {
-        return null;
+        List<Book> allBooks = findAll();
+
+        // Filter books by title
+        List<Book> matchingBooks = new ArrayList<>();
+        for (Book book : allBooks) {
+            if (book.getType().equalsIgnoreCase(type)) {
+                matchingBooks.add(book);
+            }
+        }
+        saveDataToJson();
+        return matchingBooks;
     }
 
     /**
@@ -209,49 +249,17 @@ public class JsonBookRepository implements BookRepository {
      */
     @Override
     public List<Book> findByAuthor(String author) throws IllegalArgumentException, PersistenceException {
-        return null;
+        List<Book> allBooks = findAll();
+
+        // Filter books by title
+        List<Book> matchingBooks = new ArrayList<>();
+        for (Book book : allBooks) {
+            if (book.getAuthor().equalsIgnoreCase(author)) {
+                matchingBooks.add(book);
+            }
+        }
+        saveDataToJson();
+        return matchingBooks;
     }
-   
-    // public JsonBookRepository(@Value("${json.file.path}") String filePath) {
-    //     this.filePath = Paths.get(filePath);
-    //     gson = new GsonBuilder()
-    //             // .serializeNulls()
-    //             .create();
-    //     database = loadDataFromJson();
-    // }
 
-    // private Map<UUID, Book> loadDataFromJson() {
-    //     try {
-    //         if (Files.exists(filePath)) {
-    //             String jsonContent = Files.readString(filePath);
-    //             TypeToken<Map<UUID, Book>> typeToken = new TypeToken<Map<UUID, Book>>() {
-    //             };
-    //             return gson.fromJson(jsonContent, typeToken.getType());
-    //         } else {
-    //             // Create the file if it doesn't exist
-    //             Files.createFile(filePath);
-    //             return new HashMap<>();
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    //     return new HashMap<>();
-    // }
-
-    // private void saveDataToJson() {
-    //     try {
-    //         // Read existing data from the file
-    //         Map<UUID, Book> existingData = loadDataFromJson();
-
-    //         // Merge existing data with the current state of the database
-    //         existingData.putAll(database);
-
-    //         // Write the combined data back to the file
-    //         try (Writer writer = new FileWriter(String.valueOf(filePath))) {
-    //             gson.toJson(existingData, writer);
-    //         }
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // } 
 }

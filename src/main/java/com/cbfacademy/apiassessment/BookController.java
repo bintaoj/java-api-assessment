@@ -14,9 +14,11 @@ import java.util.UUID;
 public class BookController {
     
     private BookService bookService;
+    private BookRepository bookRepository;
     
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, BookRepository bookRepository) {
         this.bookService = bookService;
+        this.bookRepository= bookRepository;
     }
 
     @GetMapping("{id}")
@@ -28,7 +30,7 @@ public class BookController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Book>> getAllIBooks() {
+    public ResponseEntity<List<Book>> getAllBooks() {
 
         return ResponseEntity.status(HttpStatus.FOUND).body(bookService.getAllBooks());
 
@@ -47,14 +49,30 @@ public class BookController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity <Void> deleteIou(@PathVariable("id")UUID id) {
+    public ResponseEntity <HttpStatus> deleteBook(@PathVariable("id")UUID id) {
 
         try {
+            
             bookService.deleteBook(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            return new  ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+            }catch (Exception e){
+                return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            }
         }
-    }
+
+    // @GetMapping()
+    // public ResponseEntity<Book> getBook(@PathVariable("title") String getTitle()) {
+
+    //     // bookService.getBook(id);
+
+    //     return ResponseEntity.status(HttpStatus.FOUND).body(bookService.getBook(getTitle()));
+    // }
     
+    // @GetMapping("{title}")
+    // public ResponseEntity<List<Book>> getBookbyTitle(@PathVariable("title")String title ) {
+
+    //     return ResponseEntity.status(HttpStatus.FOUND).body(bookService.findByTitle());
+
+    // }
 }
