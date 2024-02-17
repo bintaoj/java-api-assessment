@@ -61,6 +61,16 @@ public class BookController {
             }
         }
 
+        @GetMapping("{title}")
+        public ResponseEntity<List<Book>> getBookbyTitle(@PathVariable("title") String title) {
+            List<Book> books = bookService.findByTitle(title);
+            if (books.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(books);
+            }
+        }
+
     // @GetMapping()
     // public ResponseEntity<Book> getBook(@PathVariable("title") String getTitle()) {
 
@@ -75,4 +85,5 @@ public class BookController {
     //     return ResponseEntity.status(HttpStatus.FOUND).body(bookService.findByTitle());
 
     // }
+
 }

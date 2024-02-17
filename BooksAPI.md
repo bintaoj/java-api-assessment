@@ -36,9 +36,9 @@ Before you begin, make sure you have the following installed:
 
 2. [Git](https://git-scm.com/downloads)
 
-3. [Postman](https://www.postman.com/)
+3. [Postman](https://www.postman.com/) to test the different endpoints.
 
-3. [IDE like VS Code](https://code.visualstudio.com/Download)
+3. Your favourite IDE like [VS Code](https://code.visualstudio.com/Download)
    1. [Extension Pack for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
    2. [Spring Boot Extension Pack](https://marketplace.visualstudio.com/items?itemName=vmware.vscode-boot-dev-pack)
 
