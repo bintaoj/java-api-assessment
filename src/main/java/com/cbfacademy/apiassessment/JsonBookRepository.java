@@ -29,7 +29,7 @@ public class JsonBookRepository implements BookRepository {
     private final Gson gson;
 
     /** The list of books currently loaded in memory. */
-    private List<Book> books;
+    private final List<Book> books;
 
     /**
      * Constructs a new {@code JsonBookRepository} with the specified file path.
@@ -47,7 +47,7 @@ public class JsonBookRepository implements BookRepository {
      *
      * @return The list of books loaded from the JSON file.
      */
-    public List<Book> loadDataFromJson() {
+     List<Book> loadDataFromJson() {
         try {
             if (Files.exists(filePath) && Files.size(filePath) > 0) {
                 // Proceed to read and parse the JSON file
@@ -116,7 +116,7 @@ public class JsonBookRepository implements BookRepository {
     @Override
     public List<Book> findAll() throws PersistenceException {
 
-        // List<Book> books = new ArrayList<>();
+        System.out.println(books);
         return Collections.unmodifiableList(books);
     }
 
@@ -222,10 +222,13 @@ public class JsonBookRepository implements BookRepository {
     }
 
     /**
-     * @param title
-     * @return
-     * @throws IllegalArgumentException
-     * @throws PersistenceException
+     * Finds books in the repository by their title.
+     *
+     * @param title The title of the books to find.
+     * @return A list of books with the specified title.
+     * @throws IllegalArgumentException If the provided title is null or empty.
+     * @throws PersistenceException If an error occurs while searching for the books.
+     *                                  
      */
     @Override
     public List<Book> findByTitle(String title) throws IllegalArgumentException, PersistenceException {
@@ -235,11 +238,11 @@ public class JsonBookRepository implements BookRepository {
 
         //try {
        // Read the list of books from the JSON file
-            List<Book> allBooks = loadDataFromJson();
+            //List<Book> allBooks = loadDataFromJson();
 
             // Filter books by title
             List<Book> matchingBooks = new ArrayList<>();
-            for (Book book : allBooks) {
+            for (Book book : books) {
                 if (book.getTitle().equalsIgnoreCase(title)) {
                     matchingBooks.add(book);
                 }
@@ -259,7 +262,7 @@ public class JsonBookRepository implements BookRepository {
      */
     @Override
     public List<Book> findByType(String type) throws IllegalArgumentException, PersistenceException {
-        List<Book> allBooks = findAll();
+        List<Book> allBooks = loadDataFromJson();
 
         // Filter books by title
         List<Book> matchingBooks = new ArrayList<>();
@@ -280,7 +283,7 @@ public class JsonBookRepository implements BookRepository {
      */
     @Override
     public List<Book> findByAuthor(String author) throws IllegalArgumentException, PersistenceException {
-        List<Book> allBooks = findAll();
+        List<Book> allBooks = loadDataFromJson();
 
         // Filter books by title
         List<Book> matchingBooks = new ArrayList<>();
