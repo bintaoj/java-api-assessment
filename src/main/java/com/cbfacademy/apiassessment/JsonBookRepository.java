@@ -16,21 +16,37 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * A repository implementation that stores book data in a JSON file.
+ */
 @Repository
 public class JsonBookRepository implements BookRepository {
 
+    /** The file path where JSON data is stored. */
     private final Path filePath;
-    private final Gson gson;
-    private  List<Book> books;
 
+    /** Gson instance for JSON serialization/deserialization. */
+    private final Gson gson;
+
+    /** The list of books currently loaded in memory. */
+    private List<Book> books;
+
+    /**
+     * Constructs a new {@code JsonBookRepository} with the specified file path.
+     *
+     * @param filePath The path to the JSON file storing book data.
+     */
     public JsonBookRepository(@Value("${json.file.path}") String filePath) {
-       this.filePath = Paths.get(filePath);
+        this.filePath = Paths.get(filePath);
         gson = new GsonBuilder().create();
         books = loadDataFromJson();
     }
 
-    
-
+    /**
+     * Loads book data from the JSON file.
+     *
+     * @return The list of books loaded from the JSON file.
+     */
     public List<Book> loadDataFromJson() {
         try {
             if (Files.exists(filePath) && Files.size(filePath) > 0) {
@@ -55,18 +71,21 @@ public class JsonBookRepository implements BookRepository {
         }
     }
 
+    /**
+     * Saves the current list of books to the JSON file.
+     */
     private void saveDataToJson() {
         try {
             // Read existing data from the file
             List<Book> existingData = loadDataFromJson();
 
-            // Set to store unique identifiers (id + title + type)
+            // Set to store unique identifiers (title + type)
             Set<String> existingIdentifiers = new HashSet<>();
             for (Book book : existingData) {
                 existingIdentifiers.add(book.getTitle() + book.getType());
             }
 
-            // Add the current state of the database to existing data, avoiding duplicates
+            // Add the current state of the file to existing data, avoiding duplicates
             for (Book book : books) {
                 String identifier = book.getTitle() + book.getType();
                 if (!existingIdentifiers.contains(identifier)) {
@@ -89,8 +108,10 @@ public class JsonBookRepository implements BookRepository {
     }
 
     /**
-     * @return
-     * @throws PersistenceException
+     * Retrieves all books from the repository.
+     *
+     * @return An unmodifiable list containing all books in the repository.
+     * @throws PersistenceException If an error occurs while retrieving the books.
      */
     @Override
     public List<Book> findAll() throws PersistenceException {
@@ -100,10 +121,13 @@ public class JsonBookRepository implements BookRepository {
     }
 
     /**
-     * @param id
-     * @return
-     * @throws IllegalArgumentException
-     * @throws PersistenceException
+     * Finds a book in the repository by its unique identifier.
+     *
+     * @param id The unique identifier of the book to find.
+     * @return The book with the specified identifier, or null if not found.
+     * @throws IllegalArgumentException If the provided ID is null.
+     * @throws PersistenceException     If an error occurs while searching for the
+     *                                  book.
      */
     @Override
     public Book find(UUID id) throws IllegalArgumentException, PersistenceException {
@@ -120,10 +144,12 @@ public class JsonBookRepository implements BookRepository {
     }
 
     /**
-     * @param entity
-     * @return
-     * @throws IllegalArgumentException
-     * @throws PersistenceException
+     * Creates a new book in the repository.
+     *
+     * @param entity The book to be created.
+     * @return The newly created book.
+     * @throws IllegalArgumentException If the provided book entity is null.
+     * @throws PersistenceException     If an error occurs while creating the book.
      */
     @Override
     public Book create(Book entity) throws IllegalArgumentException, PersistenceException {
@@ -140,9 +166,11 @@ public class JsonBookRepository implements BookRepository {
     }
 
     /**
-     * @param entity
-     * @throws IllegalArgumentException
-     * @throws PersistenceException
+     * Deletes a book from the repository.
+     *
+     * @param entity The book to be deleted.
+     * @throws IllegalArgumentException If the provided book entity is null.
+     * @throws PersistenceException     If an error occurs while deleting the book.
      */
     @Override
     public void delete(Book entity) throws IllegalArgumentException, PersistenceException {
@@ -155,16 +183,19 @@ public class JsonBookRepository implements BookRepository {
             if (currentBook.getId().equals(deleteBookbyUuid)) {
                 books.remove(i);
                 saveDataToJson();
+                return;
             }
         }
         throw new PersistenceException("Book with ID " + deleteBookbyUuid + " not found for deletion.");
     }
 
     /**
-     * @param entity
-     * @return
-     * @throws IllegalArgumentException
-     * @throws PersistenceException
+     * Updates an existing book in the repository.
+     *
+     * @param entity The updated book entity.
+     * @return The updated book.
+     * @throws IllegalArgumentException If the provided book entity is null.
+     * @throws PersistenceException     If an error occurs while updating the book.
      */
     @Override
     public Book update(Book entity) throws IllegalArgumentException, PersistenceException {
@@ -202,19 +233,19 @@ public class JsonBookRepository implements BookRepository {
             throw new IllegalArgumentException("Title cannot be null or empty");
         }
 
-        // try {
-        // Read the list of books from the JSON file
-        List<Book> allBooks = loadDataFromJson();
+        //try {
+       // Read the list of books from the JSON file
+            List<Book> allBooks = loadDataFromJson();
 
-        // Filter books by title
-        List<Book> matchingBooks = new ArrayList<>();
-        for (Book book : allBooks) {
-            if (book.getTitle().equalsIgnoreCase(title)) {
-                matchingBooks.add(book);
+            // Filter books by title
+            List<Book> matchingBooks = new ArrayList<>();
+            for (Book book : allBooks) {
+                if (book.getTitle().equalsIgnoreCase(title)) {
+                    matchingBooks.add(book);
+                }
             }
-        }
-        saveDataToJson();
-        return matchingBooks;
+            saveDataToJson();
+            return matchingBooks;
         // } catch (IOException e) {
         // throw new PersistenceException("Error reading books from JSON file");
         // }
