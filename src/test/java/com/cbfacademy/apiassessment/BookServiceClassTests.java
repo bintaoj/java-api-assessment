@@ -7,14 +7,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-
 import java.util.List;
-
 import java.util.UUID;
-
 import org.assertj.core.api.Assertions;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,6 +33,12 @@ public class BookServiceClassTests {
         MockitoAnnotations.openMocks(this);
         books = new ArrayList<>();
         bookService = new BookServiceClass(bookRepository, books);
+        // Book book = new Book("Narrative of the Life of Frederick Douglass",
+        //         "Frederick Douglass",
+        //         "History",
+        //         "English",
+        //         1845,
+        //         "Digital");
     }
 
     @Test
@@ -55,7 +59,7 @@ public class BookServiceClassTests {
                 "History",
                 "English",
                 1845,
-                "PDF");
+                "Digital");
 
         when(bookRepository.find(id)).thenReturn(mockBook);
 
@@ -72,7 +76,7 @@ public class BookServiceClassTests {
                 "History",
                 "English",
                 1845,
-                "PDF");
+                "Digital");
 
         when(bookRepository.create(newBook)).thenReturn(newBook);
 
@@ -81,11 +85,12 @@ public class BookServiceClassTests {
         Assertions.assertThat(result).isEqualTo(newBook);
     }
 
+    @DisplayName("Delete book by Id")
     @Test
     void testDeleteBook() {
         UUID id = UUID.randomUUID();
         Book mockBook = new Book("Narrative of the Life of Frederick Douglass", "Frederick Douglass", "History",
-                "English", 1845, "PDF");
+                "English", 1845, "Digital");
 
         when(bookRepository.find(id)).thenReturn(mockBook);
 
@@ -94,6 +99,8 @@ public class BookServiceClassTests {
         verify(bookRepository, times(1)).delete(mockBook);
     }
 
+
+    @DisplayName("test for getAllEmployees method")
     @Test
     void testFindByAuthor() {
 
@@ -103,7 +110,7 @@ public class BookServiceClassTests {
                 "History",
                 "English",
                 1845,
-                "PDF");
+                "Digital");
         listOfBooks.add(book);
 
         // Mocking the behavior of bookRepository.findByAuthor()
@@ -126,7 +133,7 @@ public class BookServiceClassTests {
                 "History",
                 "English",
                 1845,
-                "PDF");
+                "Digital");
         listOfBooks.add(book);
 
         // Mocking the behavior of bookRepository.findByAuthor()
@@ -150,14 +157,14 @@ public class BookServiceClassTests {
                 "History",
                 "English",
                 1845,
-                "PDF");
+                "Digital");
         listOfBooks.add(book);
 
         // Mocking the behavior of bookRepository.findByAuthor()
-        when(bookRepository.findByType("PDF")).thenReturn(listOfBooks);
+        when(bookRepository.findByType("Digital")).thenReturn(listOfBooks);
 
         // Calling the method under test
-        List<Book> result = bookService.findByType("PDF");
+        List<Book> result = bookService.findByType("Digital");
 
         // Asserting that the result matches the expected list of books
         assertEquals(listOfBooks, result);
@@ -167,8 +174,12 @@ public class BookServiceClassTests {
     @Test
     void testUpdateBook() {
         UUID id = UUID.randomUUID();
-        Book mockBook = new Book("Narrative of the Life of Frederick Douglass", "Frederick Douglass", "History",
-                "English", 1845, "PDF");
+        Book mockBook = new Book("Narrative of the Life of Frederick Douglass",
+                "Frederick Douglass",
+                "History",
+                "English",
+                1845,
+                "Digital");
 
         when(bookRepository.find(id)).thenReturn(mockBook);
 
@@ -178,8 +189,7 @@ public class BookServiceClassTests {
 
         Assertions.assertThat(result).isEqualTo(mockBook);
 
-        // Verify that the bookRepository.update() method was called with the correct
-        // book
+        // Verify that the bookRepository.update() method was called with the correct book
         verify(bookRepository, times(1)).update(mockBook);
     }
 }

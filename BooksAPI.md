@@ -147,3 +147,20 @@ A Java serialization/deserialization library to convert Java Objects into JSON a
   <version>2.10.1</version>
 </dependency>
 ```
+## Roadmap
+
+- Increase search functionality such as search by Title, Author, Language 
+
+- Ability to search book Title available in different formats.
+
+
+
+
+## Contributing
+
+Contributions are always welcome!
+
+See `contributing.md` for ways to get started.
+
+
+

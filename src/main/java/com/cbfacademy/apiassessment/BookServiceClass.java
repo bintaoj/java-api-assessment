@@ -11,15 +11,16 @@ Service class for performing operations related to books.
 @Service
 public class BookServiceClass implements BookService {
     BookRepository bookRepository;
-    //List<Book> books;
+    List<Book> books;
    
     /**
      * Constructs a new {@code BookServiceClass} with the specified book repository.
      *
      * @param bookRepository The repository for book data.
      */
-    public BookServiceClass(BookRepository bookRepository) {
+    public BookServiceClass(BookRepository bookRepository, List<Book> books ) {
         this.bookRepository = bookRepository;
+        this.books = books;
 
         
     }
