@@ -116,7 +116,7 @@ public class JsonBookRepository implements BookRepository {
     @Override
     public List<Book> findAll() throws PersistenceException {
 
-        System.out.println(books);
+        //System.out.println(books);
         return Collections.unmodifiableList(books);
     }
 
@@ -248,7 +248,7 @@ public class JsonBookRepository implements BookRepository {
                 }
             }
             saveDataToJson();
-            return matchingBooks;
+            return matchingBooks ;
         // } catch (IOException e) {
         // throw new PersistenceException("Error reading books from JSON file");
         // }
